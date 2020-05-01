@@ -4,21 +4,19 @@
 #include <regex>
 #include <sstream>
 
-bool isWinner(std::vector<char> userInputs, char currentPlayer) {
+bool thereIsWinner(std::vector<char> userInputs, char currentPlayer) {
     std::string winPossibilities = "012,345,678,048,246,036,147,258";
     short len = winPossibilities.size();
     std::stringstream ss;
-    for (int i = 0,j = 0; i < len; i++) {
+    for (int i = 0,j = 0; i < len; i++,j++) {
         ss << winPossibilities[i];
-        short index = std::stoi(ss.str());
+        short wpIndex = std::stoi(ss.str());
         ss.str("");
-        if (userInputs[index] != currentPlayer) {
+        if (userInputs[wpIndex] != currentPlayer) {
             i += 3 - j; 
-            j = 0;
+            j = -1;
             continue;
-        }
-        j++;
-        if (j >= 3) {
+        } else if (j >= 2) {
             return true;
         }
         
@@ -42,26 +40,31 @@ void printBoard(std::vector<char> userInputs) {
 
 int main()
 {
-    std::vector<char> userInputs{ '1','2', '3', '4', '5', '6', '7', '8', '9' };
     char currentPlayer = 'X';
     std::string input = "";
     const char* sysOutput = "Player %c please enter your next move: ";
     std::regex numbers("[1-9]");
-    int counter = 0;
-    do {
-        if (std::regex_search(input, numbers)) { // Ensure user entered legitimate character
-            counter++;
-            short tmpInt = std::stoi(input) - 1;
-            userInputs[tmpInt] = currentPlayer;
-            if (isWinner(userInputs, currentPlayer)) {
-                printBoard(userInputs);
-                std::cout << "Player " << currentPlayer << " is the winner!" << std::endl;
-                break;
+    do { 
+        std::vector<char> userInputs{ '1','2', '3', '4', '5', '6', '7', '8', '9' };
+        int counter = 0;
+        do {
+            if (std::regex_search(input, numbers)) { // Ensure user entered legitimate character
+                counter++;
+                short tmpInt = std::stoi(input) - 1;
+                userInputs[tmpInt] = currentPlayer;
+                if (thereIsWinner(userInputs, currentPlayer)) {
+                    printBoard(userInputs);
+                    std::cout << "Player " << currentPlayer << " is the winner!" << std::endl;
+                    break;
+                }
+                (currentPlayer == 'X') ? (currentPlayer = 'O')
+                    : (currentPlayer = 'X');
             }
-            (currentPlayer == 'X') ? (currentPlayer = 'O')
-                : (currentPlayer = 'X');
-        }
-        printBoard(userInputs);
-        std::printf(sysOutput, currentPlayer);
-    } while (std::cin >> input && counter < 9);
+            printBoard(userInputs);
+            std::printf(sysOutput, currentPlayer);
+        } while (std::cin >> input && counter < 9);
+        
+        std::cout << "Start over? (Y/N)\n";
+        std::cin >> input;
+    } while (input == "Y" || input == "y");
 }
