@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+/TicTacToe/Debug
+/TicTacToe/.vs/TicTacToe/v16/ipch/AutoPCH/d1cb7c37793d2810
+/TicTacToe/.vs/TicTacToe/v16
